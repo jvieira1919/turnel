@@ -25,32 +25,32 @@ app.post("/api/notes", function (req, res) {
             if (err) throw err;
         })
     })
-        res.json(notes);
-    })
+    res.json(notes);
+})
 
-    app.delete("/api/notes/:id", function (req, res) {
-        randomId = req.params.id;
+app.delete("/api/notes/:id", function (req, res) {
+    randomId = req.params.id;
 
-        fs.readFile("../db/db.json"), function (err, data) {
+    fs.readFile("../db/db.json"), function (err, data) {
+        if (err) throw err;
+        const deletedNotes = JSON.parse(data);
+        const index = deletedNotes.findIndex(function (i) {
+            return i.id === parseInt(randomId);
+        })
+        if (index != -1) deletedNotes.splice(index, 1);
+
+        fs.writeFile("../db/db.json", JSON.stringify(deletedNotes), function (err) {
             if (err) throw err;
-            const deletedNotes = JSON.parse(data);
-            const index = deletedNotes.findIndex(function (i) {
-                return i.id === parseInt(randomId);
-            })
-            if (index != -1) deletedNotes.splice(index, 1);
+        })
 
-            fs.writeFile("../db/db.json", JSON.stringify(deletedNotes), function (err) {
-                if (err) throw err;
-            })
+        res.json(deletedNotes);
+    }
+})
 
-            res.json(deletedNotes);
-        }
-    })
+app.get("*", function (req, res) {
+    res.sendFile(path.join("index.html", { root: path.join(__dirname, "./public")}));
+})
 
-    app.get("*", function (req, res) {
-        res.sendFile(path.join(__dirname, "index.html"));
-    })
-
-    app.listen(PORT, function () {
-        console.log("http://localhost: " + PORT);
-    })
+app.listen(PORT, function () {
+    console.log("http://localhost: " + PORT);
+})
