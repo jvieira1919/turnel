@@ -1,33 +1,56 @@
 const express = require("express");
 const fs = require("fs");
+
 const app = express();
 const PORT = process.env.PORT || 8080;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-const server = http.createServer(handleRequest);
-
-server.listen(PORT, function(){
-    console.log("http://localhost:" + PORT);
-});
-
-function handleRequest(req, res){
-    const path = req.url;
-    fs.readFile(__dirname + "/index.html", function(err, data) {
-        if (err) throw err;
-});
-}
-// I am creating the routes
-app.get("/", function(req, res){
-    res.sendFile(path.join(__dirname, "index.html"));
-});
-
-app.get("/notes", function(req, res){
+app.get("/api/notes", function (req, res) {
     res.sendFile(path.join(__dirname, "notes.html"));
-});
+})
 
-//.post posts the data
-//.delete deletes data
-//.get gets data 
-// update file
+app.post("/api/notes", function (req, res) {
+    const notes = req.body;
+    const random = Math.ceiling(Math.random() * 1000);
+    notes.id = random;
+
+    fs.readFile("../db/db.json", function (err, data) {
+        if (err) throw err;
+        const newNotes = JSON.parse(data);
+        newNotes.push(notes);
+
+        fs.writeFile("../db.db.json", JSON.stringify(newNotes), function (err) {
+            if (err) throw err;
+        })
+    })
+        res.json(notes);
+    })
+
+    app.delete("/api/notes/:id", function (req, res) {
+        randomId = req.params.id;
+
+        fs.readFile("../db/db.json"), function (err, data) {
+            if (err) throw err;
+            const deletedNotes = JSON.parse(data);
+            const index = deletedNotes.findIndex(function (i) {
+                return i.id === parseInt(randomId);
+            })
+            if (index != -1) deletedNotes.splice(index, 1);
+
+            fs.writeFile("../db/db.json", JSON.stringify(deletedNotes), function (err) {
+                if (err) throw err;
+            })
+
+            res.json(deletedNotes);
+        }
+    })
+
+    app.get("*", function (req, res) {
+        res.sendFile(path.join(__dirname, "index.html"));
+    })
+
+    app.listen(PORT, function () {
+        console.log("http://localhost: " + PORT);
+    })
