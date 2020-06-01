@@ -10,6 +10,7 @@ app.use(express.json());
 
 app.get("/api/notes", function (req, res) {
     res.sendFile(path.join(__dirname, "notes.html"));
+    res.sendFile('notes.html',{root: path.join(__dirname,'./public')});
 })
 
 app.post("/api/notes", function (req, res) {
