@@ -9,7 +9,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.get("/notes", function (req, res) {
-    res.sendFile("notes.html",{root: path.join(__dirname,"./public")});
+    res.sendFile("notes.html",{root: path.join(__dirname,"../public")});
 })
 
 app.get("/api/notes", function(req, res){
@@ -56,7 +56,7 @@ app.delete("/api/notes/:id", function (req, res) {
 })
 
 app.get("*", function (req, res) {
-    res.sendFile(path.join("index.html", { root: path.join(__dirname, "./public")}));
+    res.sendFile(path.join("index.html", { root: path.join(__dirname, "../public")}));
 })
 
 app.listen(PORT, function () {
